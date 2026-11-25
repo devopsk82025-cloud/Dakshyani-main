@@ -23,12 +23,12 @@
   <header class="site-header" id="siteHeader">
     <a class="brand" href="#" data-home><span class="brand-mark">DC</span><span>Deeksha <span class="brand-accent">Consultancy</span></span></a>
     <nav class="main-nav">
-      <a href="#home">Home</a><a href="#about">About Us</a><a href="#services">Services</a></a><a href="#contact">Contact</a>
+      <a href="#home">Home</a><a href="#about">About Us</a><a href="#services">Services</a><a href="#contact">Contact</a>
     </nav>
     <div class="header-actions">
       <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">☼</button>
-      <button class="btn btn-ghost" data-open-auth="login">Student / Partner / Factory Login</button>
-      <button class="btn btn-ghost" data-open-auth="login" data-admin-entry="true">Admin Login</button>
+      <button class="btn btn-ghost" data-open-auth="login">Student / Partner / Company Login</button>
+      <button class="btn btn-ghost" data-admin-entry="true">Admin Login</button>
       <button class="btn btn-primary" data-open-auth="signup">Get started <span>↗</span></button>
     </div>
     <button class="mobile-menu" id="mobileMenu" aria-label="Open menu">☰</button>
@@ -158,7 +158,7 @@
       <div class="auth-mode-switch"><button type="button" class="mini-btn active" id="loginMode">Log in</button><button type="button" class="mini-btn" id="signupMode">Create account</button></div>
       <form id="supabaseAuthForm" class="auth-form">
         <label id="nameField" class="hidden">Full name<input id="authName" autocomplete="name" placeholder="Your full name"></label>
-        <label>Account type<select id="authRole"><option value="freelancer">Student / Freelancer</option><option value="partner">Referral Partner / Agency</option><option value="factory">Company / Factory</option></select></label>
+        <label>Account type<select id="authRole"><option value="freelancer">Student / Freelancer</option><option value="partner">Partner / Recruitment Agency</option><option value="factory">Company / Factory</option></select></label>
         <label>Email address<input id="authEmail" type="email" autocomplete="email" placeholder="you@example.com" required></label>
         <label>Password<input id="authPassword" type="password" autocomplete="current-password" minlength="8" placeholder="At least 8 characters" required></label>
         <button class="btn btn-primary" id="authSubmit">Log in ↗</button><button type="button" class="modal-back-link" id="resetPassword">Forgot password?</button>

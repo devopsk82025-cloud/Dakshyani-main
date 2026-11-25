@@ -92,3 +92,27 @@ Your existing project is deployed through GitHub and Vercel. Keep the existing s
 ## Important note about the SQL
 
 This is a foundational schema, not a complete production recruitment product. Before launch, test every policy using separate test accounts. In particular, the agency's commercial rules for partner commission calculation, referral ownership, candidate consent and factory visibility must be agreed and implemented explicitly.
+
+## Dashboard enhancement update (Student/Freelancer, Partner/Agency, Company, Admin)
+
+The current frontend includes:
+- Shared Student/Freelancer, Partner/Agency and Company login/registration, with role selection enforced at login.
+- A separate `admin-login.html` page. Admin role is checked against `public.profiles` after Supabase authentication; public signup cannot select Admin.
+- Freelancer overview metrics from real `applications` rows: `completed` and active/in-progress statuses. Freelancer can save an expected hourly rate and currency. Rank is assigned by Admin.
+- Partner/Agency suggested opportunities from published jobs, referrals, candidate submissions and commission records.
+- Company suggested freelancers from freelancer profiles, plus project application status controls and manpower requests.
+- Admin account approvals and rank assignment (0–100).
+
+### Required database migration for these dashboard features
+
+After the existing base schema and your profile permission fix are already applied, run `supabase/dashboard_upgrade.sql` once in Supabase SQL Editor. This adds freelancer rate/rank fields, explicit `in_progress` and `completed` application statuses, protects rank from self-editing, protects application status from freelancer self-editing, and permits factory accounts to read freelancer directory data. Keep RLS enabled.
+
+### Deploy
+
+1. Keep your existing `supabase-config.js` with your real Project URL and Publishable/anon key.
+2. Upload/commit the updated `index.html`, `style.css`, `script.js`, `admin-login.html`, and `supabase/dashboard_upgrade.sql` to the GitHub repository connected to Vercel.
+3. Run the SQL migration before testing the new dashboards.
+4. Let Vercel deploy. Admin sign-in is at `/admin-login.html`; other account types use the Login button on the homepage.
+5. Test using separate approved test accounts for freelancer, partner and factory. New registrations remain pending until Admin approves them.
+
+Rank 0 means not yet ranked. Admin can assign a rank from 1 to 100 under User accounts. Companies can update an application to In progress or Completed from Project applications; the freelancer dashboard counts those statuses from the database.

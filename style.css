@@ -105,3 +105,46 @@ body{background:#070d25;color:#f5f6ff}
 
 /* Supabase role portal additions */
 .auth-mode-switch{display:flex;gap:8px;margin:8px 0 14px}.auth-mode-switch .mini-btn{flex:1}.auth-mode-switch .mini-btn.active{background:#6e5be8;color:#fff;border-color:#6e5be8}.auth-form select{width:100%;border:1px solid var(--line);border-radius:10px;padding:12px 13px;background:#fcfcff;color:var(--ink);font-size:11px;outline:none}.hidden{display:none!important}#portalNotice{margin-bottom:12px}#portalContent .dash-panel{margin-top:8px}#portalContent .content-card{margin-top:0}#portalContent .project-form{max-width:850px}
+
+
+/* Theme coverage: shared surfaces and text across the public site and dashboards. */
+body.dark-ui { background:var(--paper); color:var(--ink); color-scheme:dark; }
+body.dark-ui .site-header { background:#11122d; }
+body.dark-ui .stats-strip, body.dark-ui .section, body.dark-ui .site-footer { background:#1b1b32; color:var(--ink); }
+body.dark-ui .section-heading h2, body.dark-ui .match-copy h2, body.dark-ui .path-card h3,
+body.dark-ui .content-card h3, body.dark-ui .panel-title h2, body.dark-ui .dash-top h1 { color:var(--ink); }
+body.dark-ui .section-heading p, body.dark-ui .match-copy p, body.dark-ui .path-card p,
+body.dark-ui .path-card ul, body.dark-ui .dash-top p, body.dark-ui .card-heading p { color:var(--muted); }
+body.dark-ui .path-card, body.dark-ui .talent-card, body.dark-ui .company-card { background:#262640; color:var(--ink); border:1px solid var(--line); }
+body.dark-ui .path-number { color:#aaa8c2; }
+body.dark-ui .match-section { background:linear-gradient(115deg,#17163f,#30286f 58%,#493276); }
+body.dark-ui .dashboard, body.dark-ui .dash-main { background:#19192e; color:var(--ink); }
+body.dark-ui .sidebar { background:#141429; border-color:#35344f; }
+body.dark-ui .side-link { color:#c9c6df; }
+body.dark-ui .side-link.active, body.dark-ui .side-link:hover { background:#302d50; color:#fff; }
+body.dark-ui .content-card, body.dark-ui .metric-card, body.dark-ui .project-item,
+body.dark-ui .talent-card-small, body.dark-ui .user-pill, body.dark-ui .auth-modal { background:#24243b; color:#f4f2ff; border-color:#393852; }
+body.dark-ui .project-form label, body.dark-ui .profile-form label, body.dark-ui .auth-form label { color:#e8e5fa; }
+body.dark-ui input, body.dark-ui textarea, body.dark-ui select,
+body.dark-ui .search-input, body.dark-ui .project-form input, body.dark-ui .project-form textarea,
+body.dark-ui .project-form select, body.dark-ui .profile-form input, body.dark-ui .profile-form textarea,
+body.dark-ui .auth-form input, body.dark-ui .auth-form select { background:#19192e; color:#f4f2ff; border-color:#494765; }
+body.dark-ui input::placeholder, body.dark-ui textarea::placeholder { color:#9290aa; }
+body.dark-ui .auth-modal h2, body.dark-ui .auth-modal p { color:#f4f2ff; }
+body.dark-ui .theme-toggle { background:#ffffff20; color:#fff; }
+body.dark-ui .hero:after { background:linear-gradient(transparent,#17172b); }
+
+/* Role-specific portal dashboard cards */
+.portal-metrics{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+#portalContent .content-card .content-card{margin-top:14px}
+#portalContent .talent-card-small{min-width:0}
+#portalContent .project-item{gap:18px}
+#portalContent .project-item>div{min-width:0}
+#portalContent .project-item b{font-size:12px}
+#portalContent .project-item p{line-height:1.6}
+#portalContent .form-note{font-size:11px;color:var(--muted);line-height:1.5}
+body.dark-ui #portalContent .form-note{color:#aaa8c2}
+@media(max-width:680px){.portal-metrics{grid-template-columns:1fr 1fr}#portalContent .project-item{align-items:flex-start}}
+.admin-rank-control{display:flex;align-items:center;gap:8px;margin-top:9px;font-size:10px;color:var(--muted)}
+.admin-rank-control input{width:78px;padding:7px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink)}
+body.dark-ui .admin-rank-control{color:#c8c5dc}
