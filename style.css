@@ -149,5 +149,16 @@ body.dark-ui #portalContent .form-note{color:#aaa8c2}
 .admin-rank-control input{width:78px;padding:7px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink)}
 body.dark-ui .admin-rank-control{color:#c8c5dc}
 
-/* Header/profile overlap fix: the public navigation is hidden while a portal dashboard is open. */
-.site-header.hidden { display: none !important; }
+
+/* Freelancer portal completion */
+.site-header.hidden{display:none!important}
+#portalContent .progress-track{height:9px;margin:12px 0 8px;background:#e8e7f2;border-radius:99px;overflow:hidden}
+#portalContent .progress-track i{display:block;height:100%;background:linear-gradient(90deg,#5ed9e5,#8064ef);border-radius:99px;transition:width .25s ease}
+#portalContent .form-note{line-height:1.7}
+#portalContent .content-card h3{margin-top:0}
+#portalContent .project-item .project-actions{flex-shrink:0}
+#portalContent a.mini-btn{display:inline-flex;align-items:center;text-decoration:none}
+@media(max-width:680px){
+ #portalContent .project-item .project-actions{width:100%;justify-content:flex-start}
+ #portalContent .metric-card strong{font-size:24px}
+}
