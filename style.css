@@ -148,3 +148,6 @@ body.dark-ui #portalContent .form-note{color:#aaa8c2}
 .admin-rank-control{display:flex;align-items:center;gap:8px;margin-top:9px;font-size:10px;color:var(--muted)}
 .admin-rank-control input{width:78px;padding:7px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink)}
 body.dark-ui .admin-rank-control{color:#c8c5dc}
+
+/* Header/profile overlap fix: the public navigation is hidden while a portal dashboard is open. */
+.site-header.hidden { display: none !important; }
