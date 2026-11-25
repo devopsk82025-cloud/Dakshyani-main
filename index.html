@@ -27,7 +27,8 @@
     </nav>
     <div class="header-actions">
       <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">☼</button>
-      <button class="btn btn-ghost" data-open-auth="login">Log in</button>
+      <button class="btn btn-ghost" data-open-auth="login">Student / Partner / Factory Login</button>
+      <button class="btn btn-ghost" data-open-auth="login" data-admin-entry="true">Admin Login</button>
       <button class="btn btn-primary" data-open-auth="signup">Get started <span>↗</span></button>
     </div>
     <button class="mobile-menu" id="mobileMenu" aria-label="Open menu">☰</button>
@@ -146,14 +147,28 @@
     </section>
   </main>
 
+  <!-- Supabase-powered role workspace -->
+  <main class="dashboard hidden" id="portalDashboard">
+    <aside class="sidebar"><a class="brand side-brand" href="#" data-portal-home><span class="brand-mark">DC</span><span>Deeksha <span class="brand-accent">Consultancy</span></span></a><div class="side-label">ACCOUNT WORKSPACE</div><div id="portalNav"></div><div class="sidebar-bottom"><button class="side-link" data-portal-home>↩ <span>Back to website</span></button><button class="side-link" id="portalLogout">⇥ <span>Log out</span></button></div></aside>
+    <section class="dash-main"><div class="dash-top"><div><span class="eyebrow" id="portalRoleLabel">ACCOUNT WORKSPACE</span><h1 id="portalGreeting">Welcome</h1><p id="portalStatus">Your account overview.</p></div><div class="user-pill"><span class="user-avatar" id="portalAvatar">D</span><span><b id="portalUserName">User</b><small id="portalUserRole">Account</small></span></div></div><div id="portalNotice"></div><div id="portalContent"></div></section>
+  </main>
+
   <div class="modal-backdrop hidden" id="authModal">
-    <div class="auth-modal"><button class="modal-close" id="closeModal" aria-label="Close">×</button><div class="modal-mark">D</div><span class="eyebrow">WELCOME TO DEEKSHA CONSULTANCY</span><h2 id="authTitle">Choose your space.</h2><p id="authSubtitle">Tell us how you want to use the platform.</p>
-      <div class="role-options"><button class="role-option" data-role-choice="freelancer"><span>👩‍💻</span><b>I'm a freelancer</b><small>Find projects and grow your work</small><i>↗</i></button><button class="role-option" data-role-choice="company"><span>🏢</span><b>I'm a company</b><small>Find talent and post projects</small><i>↗</i></button></div>
-      <form id="authForm" class="auth-form hidden"><label>Your name<input id="authName" placeholder="Enter your name" required></label><label>Email address<input type="email" placeholder="you@example.com" required></label><button class="btn btn-primary">Continue to dashboard ↗</button><small class="demo-note">Demo only — no account or password is created.</small></form>
-      <button class="modal-back-link hidden" id="changeRole">← Change account type</button>
+    <div class="auth-modal"><button class="modal-close" id="closeModal" aria-label="Close">×</button><div class="modal-mark">D</div><span class="eyebrow">WELCOME TO DEEKSHA CONSULTANCY</span><h2 id="authTitle">Sign in to your account</h2><p id="authSubtitle">Choose your account type and enter your credentials.</p>
+      <div class="auth-mode-switch"><button type="button" class="mini-btn active" id="loginMode">Log in</button><button type="button" class="mini-btn" id="signupMode">Create account</button></div>
+      <form id="supabaseAuthForm" class="auth-form">
+        <label id="nameField" class="hidden">Full name<input id="authName" autocomplete="name" placeholder="Your full name"></label>
+        <label>Account type<select id="authRole"><option value="freelancer">Student / Freelancer</option><option value="partner">Referral Partner / Agency</option><option value="factory">Company / Factory</option></select></label>
+        <label>Email address<input id="authEmail" type="email" autocomplete="email" placeholder="you@example.com" required></label>
+        <label>Password<input id="authPassword" type="password" autocomplete="current-password" minlength="8" placeholder="At least 8 characters" required></label>
+        <button class="btn btn-primary" id="authSubmit">Log in ↗</button><button type="button" class="modal-back-link" id="resetPassword">Forgot password?</button>
+        <small class="demo-note" id="authHelp">Admin accounts are created and approved separately by the site owner.</small>
+      </form>
     </div>
   </div>
 <div class="toast" id="toast"></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

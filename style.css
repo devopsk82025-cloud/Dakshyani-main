@@ -102,3 +102,6 @@ body{background:#070d25;color:#f5f6ff}
 .why-manpower{border-color:#48d4b1}
 @media(max-width:760px){.why-track{grid-auto-columns:minmax(260px,86%)}.why-card{min-height:270px}.cursor-spark{display:none}}
 @media(prefers-reduced-motion:reduce){.global-starfall .falling-star{animation:none;display:none}.cursor-spark{display:none}}
+
+/* Supabase role portal additions */
+.auth-mode-switch{display:flex;gap:8px;margin:8px 0 14px}.auth-mode-switch .mini-btn{flex:1}.auth-mode-switch .mini-btn.active{background:#6e5be8;color:#fff;border-color:#6e5be8}.auth-form select{width:100%;border:1px solid var(--line);border-radius:10px;padding:12px 13px;background:#fcfcff;color:var(--ink);font-size:11px;outline:none}.hidden{display:none!important}#portalNotice{margin-bottom:12px}#portalContent .dash-panel{margin-top:8px}#portalContent .content-card{margin-top:0}#portalContent .project-form{max-width:850px}

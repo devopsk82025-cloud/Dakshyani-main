@@ -33,45 +33,115 @@ const observer = new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIn
 $$(".reveal").forEach(el=>observer.observe(el));
 
 function toast(message){const t=$("#toast");t.textContent=message;t.classList.add("show");clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.classList.remove("show"),2600)}
-function openAuth(mode="signup",role=""){
- $("#authModal").classList.remove("hidden");$("#authForm").classList.add("hidden");$("#changeRole").classList.add("hidden");$(".role-options").classList.remove("hidden");
- $("#authTitle").textContent=mode==="login"?"Welcome back.":"Choose your space.";
- $("#authSubtitle").textContent="Tell us how you want to use the platform.";
- if(role) chooseRole(role);
+let authMode = "login";
+let supabaseClient = null;
+let activeProfile = null;
+function openAuth(mode="login", role="") {
+  authMode = mode === "signup" ? "signup" : "login";
+  $("#authModal").classList.remove("hidden");
+  $("#nameField").classList.toggle("hidden", authMode !== "signup");
+  $("#authTitle").textContent = authMode === "signup" ? "Create your account." : "Sign in to your account.";
+  $("#authSubtitle").textContent = authMode === "signup" ? "Register as a student, partner or company/factory." : "Use your registered email and password.";
+  $("#authSubmit").textContent = authMode === "signup" ? "Create account ↗" : "Log in ↗";
+  $("#loginMode").classList.toggle("active", authMode === "login");
+  $("#signupMode").classList.toggle("active", authMode === "signup");
+  if (role && ["freelancer","partner","factory"].includes(role)) $("#authRole").value = role;
 }
-function closeAuth(){$("#authModal").classList.add("hidden")}
-$$("[data-open-auth]").forEach(b=>b.addEventListener("click",()=>openAuth(b.dataset.openAuth,b.dataset.role||"")));
+function closeAuth(){ $("#authModal").classList.add("hidden"); }
+$$("[data-open-auth]").forEach(b=>b.addEventListener("click",()=>openAuth("login")));
 $("#closeModal").addEventListener("click",closeAuth);
 $("#authModal").addEventListener("click",e=>{if(e.target.id==="authModal")closeAuth()});
-function chooseRole(role){
- selectedRole=role;$(".role-options").classList.add("hidden");$("#authForm").classList.remove("hidden");$("#changeRole").classList.remove("hidden");
- $("#authTitle").textContent=role==="freelancer"?"Your talent journey starts here.":"Let’s build your team.";
- $("#authSubtitle").textContent=role==="freelancer"?"Create your demo freelancer workspace.":"Create your demo company workspace.";
+$("#loginMode").addEventListener("click",()=>openAuth("login"));
+$("#signupMode").addEventListener("click",()=>openAuth("signup"));
+function getSupabase(){
+  if (supabaseClient) return supabaseClient;
+  const cfg = window.DEEKSHA_SUPABASE || {};
+  if (!window.supabase || !cfg.url || !cfg.anonKey || cfg.url.includes("YOUR_") || cfg.anonKey.includes("YOUR_")) throw new Error("Supabase setup is incomplete. Add your Project URL and Publishable key in supabase-config.js.");
+  supabaseClient = window.supabase.createClient(cfg.url, cfg.anonKey);
+  return supabaseClient;
 }
-$$("[data-role-choice]").forEach(b=>b.addEventListener("click",()=>chooseRole(b.dataset.roleChoice)));
-$("#changeRole").addEventListener("click",()=>{$(".role-options").classList.remove("hidden");$("#authForm").classList.add("hidden");$("#changeRole").classList.add("hidden");$("#authTitle").textContent="Choose your space."});
-$("#authForm").addEventListener("submit",e=>{
- e.preventDefault();const name=$("#authName").value.trim()|| (selectedRole==="freelancer"?"Alex Morgan":"Studio North");
- localStorage.setItem("deekshaConsultancyUser",JSON.stringify({name,role:selectedRole}));closeAuth();showDashboard(selectedRole,name);
+$("#supabaseAuthForm").addEventListener("submit", async e=>{
+  e.preventDefault();
+  const submit=$("#authSubmit"); submit.disabled=true; submit.textContent="Please wait…";
+  try {
+    const sb=getSupabase(), email=$("#authEmail").value.trim(), password=$("#authPassword").value;
+    if(authMode==="signup"){
+      const role=$("#authRole").value, full_name=$("#authName").value.trim();
+      if(!full_name) throw new Error("Please enter your full name.");
+      const {data,error}=await sb.auth.signUp({email,password,options:{data:{full_name,role}}});
+      if(error) throw error;
+      closeAuth();
+      toast(data.session ? "Account created. Please wait for admin approval." : "Registration received. Check your email to confirm your account.");
+      return;
+    }
+    const {data,error}=await sb.auth.signInWithPassword({email,password});
+    if(error) throw error;
+    await loadPortal(data.user);
+    closeAuth();
+  } catch(err){ toast(err.message || "Unable to complete authentication."); }
+  finally {submit.disabled=false;submit.textContent=authMode==="signup"?"Create account ↗":"Log in ↗";}
 });
-function showDashboard(role,name){
- currentRole=role;$("#landing").classList.add("hidden");$("#freelancerDashboard").classList.toggle("hidden",role!=="freelancer");$("#companyDashboard").classList.toggle("hidden",role!=="company");
- if(role==="freelancer"){$("#freelancerGreeting").textContent=`Good evening, ${name} 👋`;$("#freelancerName").textContent=name;$("#profileName").value=name;renderProjects();renderApplications();}
- else{$("#companyGreeting").textContent=`Welcome back, ${name} 👋`;$("#companyName").textContent=name;renderTalent();renderCompanyProjects();renderFeaturedTalent();}
- window.scrollTo(0,0);
+$("#resetPassword").addEventListener("click",async()=>{
+  try {const email=$("#authEmail").value.trim();if(!email) throw new Error("Enter your email address first.");const {error}=await getSupabase().auth.resetPasswordForEmail(email,{redirectTo:location.origin});if(error)throw error;toast("Password reset email sent if the account exists.");}catch(err){toast(err.message);}
+});
+async function loadPortal(user){
+  const sb=getSupabase();
+  const {data:profile,error}=await sb.from("profiles").select("id,full_name,email,role,account_status").eq("id",user.id).single();
+  if(error) throw error;
+  if(profile.account_status!=="approved") { await sb.auth.signOut(); throw new Error("Your account is pending approval. Please contact Deeksha Consultancy."); }
+  activeProfile=profile; renderPortal();
 }
-function goHome(){ $("#landing").classList.remove("hidden");$("#freelancerDashboard").classList.add("hidden");$("#companyDashboard").classList.add("hidden");window.scrollTo(0,0); }
-$$("[data-home]").forEach(b=>b.addEventListener("click",e=>{e.preventDefault();goHome()}));
-$$("[data-logout]").forEach(b=>b.addEventListener("click",()=>{localStorage.removeItem("deekshaConsultancyUser");goHome();toast("You have logged out.")}));
-function activatePanel(role,panel){
- const prefix=role==="freelancer"?"freelancer":"company";
- $$(`#${prefix}Dashboard .side-link[data-panel]`).forEach(b=>b.classList.toggle("active",b.dataset.panel===panel));
- $$(`#${prefix}Dashboard .dash-panel`).forEach(p=>p.classList.add("hidden"));
- const target=$(`#${prefix}-${panel}`);if(target)target.classList.remove("hidden");
- if(role==="freelancer"&&panel==="applications")renderApplications();
- if(role==="company"&&panel==="manage")renderCompanyProjects();
+function portalNav(items){$("#portalNav").innerHTML=items.map((x,i)=>`<button class="side-link ${i===0?'active':''}" data-portal-tab="${x.id}">▦ <span>${x.label}</span></button>`).join("");$$('[data-portal-tab]').forEach(b=>b.addEventListener('click',()=>showPortalTab(b.dataset.portalTab)));}
+function portalPanel(title,desc,body){return `<div class="content-card"><div class="card-heading"><div><h3>${title}</h3><p>${desc}</p></div></div>${body}</div>`;}
+function showPortalTab(tab){$$('[data-portal-tab]').forEach(b=>b.classList.toggle('active',b.dataset.portalTab===tab));const node=document.querySelector(`[data-portal-section="${tab}"]`);$$('[data-portal-section]').forEach(x=>x.classList.add('hidden'));if(node)node.classList.remove('hidden');}
+function renderPortal(){
+ const p=activeProfile, role=p.role, name=p.full_name||p.email||"User";
+ $("#landing").classList.add("hidden");$("#freelancerDashboard")?.classList.add("hidden");$("#companyDashboard")?.classList.add("hidden");$("#portalDashboard").classList.remove("hidden");
+ $("#portalGreeting").textContent=`Welcome, ${name} 👋`;$("#portalUserName").textContent=name;$("#portalAvatar").textContent=name.charAt(0).toUpperCase();$("#portalUserRole").textContent=roleLabel(role);$("#portalRoleLabel").textContent=roleLabel(role).toUpperCase()+" WORKSPACE";$("#portalStatus").textContent="Your account is connected to Supabase.";
+ let items= role==="admin"?[{id:"overview",label:"Overview"},{id:"users",label:"User accounts"},{id:"jobs",label:"Jobs"},{id:"requests",label:"Manpower requests"},{id:"partners",label:"Partner referrals"}]:role==="factory"?[{id:"overview",label:"Overview"},{id:"jobs",label:"Post a job"},{id:"requests",label:"Manpower requests"}]:role==="partner"?[{id:"overview",label:"Overview"},{id:"referrals",label:"Submit referral"},{id:"candidates",label:"Submit candidate"}]:[{id:"overview",label:"Overview"},{id:"jobs",label:"Available jobs"},{id:"applications",label:"My applications"},{id:"profile",label:"My profile"}];
+ portalNav(items);let html='';
+ for(const it of items){let body='';if(it.id==='overview')body=`<p>Signed in as <b>${escapeHTML(name)}</b>. Your role is <b>${roleLabel(role)}</b>.</p><p>Account status: <b>${escapeHTML(p.account_status)}</b></p><p>Use the workspace menu to manage your activity. Information is stored in your Supabase database.</p>`;
+ else if(it.id==='users')body='<div id="adminUsers" class="project-list">Loading accounts…</div>';
+ else if(it.id==='jobs' && role==='factory')body=`<form id="createJobForm" class="project-form"><label>Job title<input name="title" required></label><label>Job type<select name="job_type"><option value="permanent">Permanent</option><option value="temporary">Temporary</option><option value="contract">Contract</option></select></label><label>Description<textarea name="description" rows="3"></textarea></label><label>Skills (comma separated)<input name="skills"></label><div class="form-row"><label>Location<input name="location"></label><label>Vacancies<input name="vacancies" type="number" min="1" value="1"></label></div><button class="btn btn-primary">Publish job</button></form><div id="factoryJobs" class="project-list"></div>`;
+ else if(it.id==='jobs' && role==='admin')body='<div id="adminJobs" class="project-list">Loading jobs…</div>';
+ else if(it.id==='jobs')body='<div id="availableJobs" class="project-list">Loading jobs…</div>';
+ else if(it.id==='applications')body='<div id="myPortalApplications" class="project-list">Loading applications…</div>';
+ else if(it.id==='requests')body=role==='factory'?`<form id="manpowerRequestForm" class="project-form"><label>Facility / company name<input name="facility_name" required></label><label>Industry<input name="industry"></label><label>Contact person<input name="contact_person" required></label><label>Contact email<input name="contact_email" type="email" required></label><label>Phone<input name="contact_phone"></label><label>Roles required<input name="roles_required" required></label><div class="form-row"><label>Headcount<input name="headcount" type="number" min="1" required></label><label>Location<input name="location" required></label></div><label>Employment type<select name="employment_type"><option value="temporary">Temporary</option><option value="permanent">Permanent</option><option value="contract">Contract</option></select></label><label>Notes<textarea name="notes"></textarea></label><button class="btn btn-primary">Submit manpower request</button></form><div id="factoryRequests" class="project-list"></div>`:'<div id="adminRequests" class="project-list">Loading requests…</div>';
+ else if(it.id==='referrals')body=`<form id="referralForm" class="project-form"><label>Contact name<input name="contact_name" required></label><label>Company name<input name="company_name"></label><label>Contact email<input name="contact_email" type="email"></label><label>Contact phone<input name="contact_phone"></label><label>Opportunity notes<textarea name="opportunity_notes"></textarea></label><button class="btn btn-primary">Submit referral</button></form>`;
+ else if(it.id==='candidates')body=`<form id="candidateForm" class="project-form"><label>Candidate name<input name="candidate_name" required></label><label>Candidate email<input name="candidate_email" type="email"></label><label>Phone<input name="candidate_phone"></label><label>Professional title<input name="candidate_title"></label><label>Skills (comma separated)<input name="skills"></label><label>Experience years<input name="experience_years" type="number" min="0" step="0.5"></label><label>Notes<textarea name="notes"></textarea></label><button class="btn btn-primary">Submit candidate</button></form>`;
+ else if(it.id==='profile')body=`<form id="freelancerProfileSupabase" class="project-form"><label>Professional title<input name="professional_title"></label><label>Skills (comma separated)<input name="skills"></label><label>About you<textarea name="bio"></textarea></label><label>Portfolio URL<input name="portfolio_url" type="url"></label><label>Experience years<input name="experience_years" type="number" min="0" step="0.5"></label><button class="btn btn-primary">Save profile</button></form>`;
+ else if(it.id==='partners')body='<div id="adminReferrals" class="project-list">Loading referrals…</div>';
+ html+=`<div class="dash-panel ${it.id==='overview'?'':'hidden'}" data-portal-section="${it.id}">${portalPanel(it.label,'Manage this area securely.',body)}</div>`;
+ }
+ $("#portalContent").innerHTML=html;wirePortalForms();loadPortalData().catch(e=>toast(e.message));showPortalTab('overview');
 }
-$$("[data-panel]").forEach(b=>b.addEventListener("click",()=>activatePanel(currentRole,b.dataset.panel)));
+function roleLabel(r){return ({freelancer:'Student / Freelancer',partner:'Partner',factory:'Company / Factory',admin:'Administrator'})[r]||r;}
+function formObject(form){return Object.fromEntries(new FormData(form).entries());}
+function wirePortalForms(){
+ const sb=getSupabase();
+ const job=$('#createJobForm');if(job)job.addEventListener('submit',async e=>{e.preventDefault();const d=formObject(job);d.skills=d.skills?d.skills.split(',').map(x=>x.trim()).filter(Boolean):[];d.vacancies=Number(d.vacancies);d.factory_id=activeProfile.id;d.status='published';const {error}=await sb.from('jobs').insert(d);if(error)toast(error.message);else{toast('Job published.');job.reset();loadPortalData();}});
+ const mf=$('#manpowerRequestForm');if(mf)mf.addEventListener('submit',async e=>{e.preventDefault();const d=formObject(mf);d.headcount=Number(d.headcount);d.factory_id=activeProfile.id;const {error}=await sb.from('manpower_requests').insert(d);if(error)toast(error.message);else{toast('Manpower request submitted.');mf.reset();loadPortalData();}});
+ const rf=$('#referralForm');if(rf)rf.addEventListener('submit',async e=>{e.preventDefault();const d=formObject(rf);d.partner_id=activeProfile.id;const {error}=await sb.from('referrals').insert(d);if(error)toast(error.message);else{toast('Referral submitted.');rf.reset();}});
+ const cf=$('#candidateForm');if(cf)cf.addEventListener('submit',async e=>{e.preventDefault();const d=formObject(cf);d.partner_id=activeProfile.id;d.skills=d.skills?d.skills.split(',').map(x=>x.trim()).filter(Boolean):[];d.experience_years=d.experience_years?Number(d.experience_years):null;const {error}=await sb.from('candidate_submissions').insert(d);if(error)toast(error.message);else{toast('Candidate submitted.');cf.reset();}});
+ const pf=$('#freelancerProfileSupabase');if(pf)pf.addEventListener('submit',async e=>{e.preventDefault();const d=formObject(pf);d.user_id=activeProfile.id;d.skills=d.skills?d.skills.split(',').map(x=>x.trim()).filter(Boolean):[];d.experience_years=d.experience_years?Number(d.experience_years):null;const {error}=await sb.from('freelancer_profiles').upsert(d);toast(error?error.message:'Profile saved.');});
+}
+async function loadPortalData(){
+ const sb=getSupabase(),role=activeProfile.role,id=activeProfile.id;
+ if(role==='admin'){
+  const [u,j,m,r]=await Promise.all([sb.from('profiles').select('id,full_name,email,role,account_status,created_at').order('created_at',{ascending:false}),sb.from('jobs').select('id,title,job_type,status,location,created_at').order('created_at',{ascending:false}),sb.from('manpower_requests').select('id,facility_name,roles_required,headcount,status,location,created_at').order('created_at',{ascending:false}),sb.from('referrals').select('id,contact_name,company_name,status,created_at').order('created_at',{ascending:false})]);
+  if(u.error)throw u.error;renderRows('adminUsers',u.data.map(x=>`<article class="project-item"><div><b>${escapeHTML(x.full_name||'')}</b><p>${escapeHTML(x.email||'')} · ${escapeHTML(x.role)} · ${escapeHTML(x.account_status)}</p></div>${x.role!=='admin' && x.account_status!=='approved'?`<button class="mini-btn" data-approve-user="${x.id}">Approve</button>`:''}</article>`));renderRows('adminJobs',(j.data||[]).map(x=>`<article class="project-item"><div><b>${escapeHTML(x.title)}</b><p>${escapeHTML(x.job_type)} · ${escapeHTML(x.location||'')}</p></div><span class="status">${escapeHTML(x.status)}</span></article>`));renderRows('adminRequests',(m.data||[]).map(x=>`<article class="project-item"><div><b>${escapeHTML(x.facility_name)}</b><p>${escapeHTML(x.roles_required)} · ${x.headcount} people · ${escapeHTML(x.location)}</p></div><span class="status">${escapeHTML(x.status)}</span></article>`));renderRows('adminReferrals',(r.data||[]).map(x=>`<article class="project-item"><div><b>${escapeHTML(x.contact_name)}</b><p>${escapeHTML(x.company_name||'')} · ${escapeHTML(x.status)}</p></div></article>`));$$('[data-approve-user]').forEach(b=>b.addEventListener('click',async()=>{b.disabled=true;const {error}=await sb.from('profiles').update({account_status:'approved'}).eq('id',b.dataset.approveUser);toast(error?error.message:'Account approved.');if(!error)loadPortalData();else b.disabled=false;}));
+ } else if(role==='freelancer'){
+  const [j,a]=await Promise.all([sb.from('jobs').select('id,title,job_type,description,skills,location,vacancies').eq('status','published').order('created_at',{ascending:false}),sb.from('applications').select('id,status,created_at,jobs(title)').eq('freelancer_id',id).order('created_at',{ascending:false})]);if(j.error)throw j.error;if(a.error)throw a.error;
+  renderRows('availableJobs',(j.data||[]).map(x=>`<article class="project-item"><div><b>${escapeHTML(x.title)}</b><p>${escapeHTML(x.job_type)} · ${escapeHTML(x.location||'Location not specified')} · ${escapeHTML((x.skills||[]).join(', '))}</p></div><button class="mini-btn" data-job-apply="${x.id}">Apply</button></article>`));renderRows('myPortalApplications',(a.data||[]).map(x=>`<article class="project-item"><div><b>${escapeHTML(x.jobs?.title||'Job')}</b><p>${escapeHTML(x.status)}</p></div></article>`));$$('[data-job-apply]').forEach(b=>b.addEventListener('click',async()=>{const {error}=await sb.from('applications').insert({job_id:b.dataset.jobApply,freelancer_id:id});toast(error?error.message:'Application submitted.');if(!error)loadPortalData();}));
+ } else if(role==='factory'){
+  const [j,m]=await Promise.all([sb.from('jobs').select('title,job_type,status,location').eq('factory_id',id).order('created_at',{ascending:false}),sb.from('manpower_requests').select('facility_name,roles_required,headcount,status').eq('factory_id',id).order('created_at',{ascending:false})]);if(j.error)throw j.error;if(m.error)throw m.error;renderRows('factoryJobs',(j.data||[]).map(x=>`<article class="project-item"><div><b>${escapeHTML(x.title)}</b><p>${escapeHTML(x.job_type)} · ${escapeHTML(x.location||'')}</p></div><span class="status">${escapeHTML(x.status)}</span></article>`));renderRows('factoryRequests',(m.data||[]).map(x=>`<article class="project-item"><div><b>${escapeHTML(x.facility_name)}</b><p>${escapeHTML(x.roles_required)} · ${x.headcount} people</p></div><span class="status">${escapeHTML(x.status)}</span></article>`));
+ }
+}
+function renderRows(id,rows){const el=document.getElementById(id);if(el)el.innerHTML=rows.length?rows.join(''):'<div class="empty-state">No records yet.</div>';}
+$('#portalLogout').addEventListener('click',async()=>{try{await getSupabase().auth.signOut();activeProfile=null;goHome();toast('Logged out.');}catch(e){toast(e.message);}});
+$$('[data-portal-home]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();goHome();}));
+function goHome(){ $('#landing').classList.remove('hidden');$('#portalDashboard').classList.add('hidden');$('#freelancerDashboard')?.classList.add('hidden');$('#companyDashboard')?.classList.add('hidden');window.scrollTo(0,0); }
+(async()=>{try{const sb=getSupabase();const {data:{session}}=await sb.auth.getSession();if(session?.user)await loadPortal(session.user);}catch(e){console.info('Supabase auto-login not active:',e.message);}})();
 
 function projectCard(p,showApply=true){
  const applied=applications.some(a=>a.id===p.id);
