@@ -139,7 +139,7 @@ function renderPortal(){
   else if(it.id==='jobs' && role==='admin')body='<div id="adminJobs" class="project-list">Loading jobs…</div>';
   else if(it.id==='jobs')body='<div id="availableJobs" class="project-list">Loading projects…</div>';
   else if(it.id==='applications' && role==='factory')body='<div id="companyApplications" class="project-list">Loading project applications…</div>';
-  else if(it.id==='analytics' && role==='freelancer')body=`<div class="metric-grid portal-metrics"><div class="metric-card"><span>Total assigned projects</span><strong id="analyticsProjectsTotal">—</strong><small>Projects assigned by Admin</small></div><div class="metric-card"><span>Completed projects</span><strong id="analyticsProjectsCompleted">—</strong><small>All assigned tasks completed</small></div><div class="metric-card"><span>Task completion rate</span><strong id="analyticsTaskCompletion">—</strong><small>Completed tasks divided by all tasks</small></div></div><div class="content-card freelancer-chart-card"><div class="card-heading"><div><h3>Project progress by assignment</h3><p>Each percentage is calculated from task statuses</p></div></div><div id="engineerAnalyticsProjectProgress" class="project-list"></div></div><div class="content-card"><div class="card-heading"><div><h3>Task status breakdown</h3><p>Live status of tasks assigned to you</p></div></div><div id="engineerTaskStatusBreakdown" class="status-breakdown"></div></div>`;
+  else if(it.id==='analytics' && role==='freelancer')body=`<div class="metric-grid portal-metrics"><div class="metric-card"><span>Total assigned projects</span><strong id="analyticsProjectsTotal">—</strong><small>Projects assigned by Admin</small></div><div class="metric-card"><span>Completed projects</span><strong id="analyticsProjectsCompleted">—</strong><small>All assigned tasks completed</small></div><div class="metric-card"><span>Task completion rate</span><strong id="analyticsTaskCompletion">—</strong><small>Completed tasks divided by all tasks</small></div></div><div class="content-card freelancer-chart-card engineer-analytics-graph-card"><div class="card-heading"><div><h3>Project completion graph</h3><p>Completion percentage for each project, calculated from completed tasks</p></div></div><div id="engineerAnalyticsChart" class="engineer-analytics-chart" aria-live="polite"></div></div><div class="content-card freelancer-chart-card"><div class="card-heading"><div><h3>Project progress by assignment</h3><p>Detailed task completion for each project</p></div></div><div id="engineerAnalyticsProjectProgress" class="project-list"></div></div><div class="content-card"><div class="card-heading"><div><h3>Task status breakdown</h3><p>Live status of tasks assigned to you</p></div></div><div id="engineerTaskStatusBreakdown" class="status-breakdown"></div></div>`;
   else if(it.id==='applications' && role==='freelancer')body='<h3>Projects assigned by Admin</h3><div id="engineerMyProjectsOverview" class="project-list">Loading assigned projects…</div><h3 style="margin-top:24px">Company job applications</h3><div id="myPortalApplications" class="project-list">Loading applications…</div>';
   else if(it.id==='applications')body='<div id="myPortalApplications" class="project-list">Loading applications…</div>'; 
   else if(it.id==='requests')body=role==='factory'?`<form id="manpowerRequestForm" class="project-form"><label>Facility / company name<input name="facility_name" required></label><label>Industry<input name="industry"></label><label>Contact person<input name="contact_person" required></label><label>Contact email<input name="contact_email" type="email" required></label><label>Phone<input name="contact_phone"></label><label>Roles required<input name="roles_required" required></label><div class="form-row"><label>Headcount<input name="headcount" type="number" min="1" required></label><label>Location<input name="location" required></label></div><label>Employment type<select name="employment_type"><option value="temporary">Temporary</option><option value="permanent">Permanent</option><option value="contract">Contract</option></select></label><label>Notes<textarea name="notes"></textarea></label><button class="btn btn-primary">Submit manpower request</button></form><div id="factoryRequests" class="project-list"></div>`:'<div id="adminRequests" class="project-list">Loading requests…</div>';
@@ -225,6 +225,27 @@ async function loadAdminEngineerData(sb){
  renderRows('adminEngineerTasks',(tasks.data||[]).map(x=>`<article class="project-item"><div><b>${escapeHTML(x.title)}</b><p>${escapeHTML(x.engineer_projects?.title||'Project')} · ${escapeHTML(x.status)} · ${escapeHTML(x.priority)}</p></div></article>`));
  renderRows('adminEngineerPayments',(payments.data||[]).map(x=>`<article class="project-item"><div><b>${escapeHTML(x.profiles?.full_name||'Engineer')} · ${escapeHTML(x.currency)} ${Number(x.amount).toLocaleString()}</b><p>${escapeHTML(x.status)} · ${escapeHTML(x.notes||'')}</p></div></article>`));
 }
+function renderEngineerAnalyticsChart(projectRows,taskRows){
+ const host=document.getElementById('engineerAnalyticsChart');
+ if(!host)return;
+ if(!projectRows.length){host.innerHTML='<div class="empty-state">Your project completion graph will appear after Admin assigns a project.</div>';return;}
+ const rows=projectRows.slice(0,8).map(p=>{
+  const related=taskRows.filter(t=>t.project_id===p.id);
+  const done=related.filter(t=>t.status==='completed').length;
+  const percent=related.length?Math.round(done/related.length*100):(p.status==='completed'?100:0);
+  return {title:String(p.title||'Untitled project'),done,total:related.length,percent};
+ });
+ const width=760,left=205,right=54,top=34,rowH=48,plotW=width-left-right,height=top+rows.length*rowH+28;
+ const grid=[0,25,50,75,100].map(v=>{const x=left+plotW*v/100;return `<line class="analytics-grid-line" x1="${x}" y1="${top-10}" x2="${x}" y2="${height-24}"/><text class="analytics-axis-label" x="${x}" y="${height-7}" text-anchor="middle">${v}%</text>`;}).join('');
+ const bars=rows.map((r,i)=>{
+  const y=top+i*rowH;
+  const label=r.title.length>27?r.title.slice(0,26)+'…':r.title;
+  const barW=plotW*r.percent/100;
+  return `<g><text class="analytics-project-label" x="${left-14}" y="${y+15}" text-anchor="end">${escapeHTML(label)}</text><rect class="analytics-bar-track" x="${left}" y="${y}" width="${plotW}" height="18" rx="8"/><rect class="analytics-bar-fill" x="${left}" y="${y}" width="${barW}" height="18" rx="8"/><text class="analytics-value-label" x="${Math.min(left+barW+9,width-36)}" y="${y+14}">${r.percent}%</text><text class="analytics-sub-label" x="${left}" y="${y+33}">${r.done}/${r.total} tasks completed</text></g>`;
+ }).join('');
+ host.innerHTML=`<div class="engineer-chart-scroll"><svg class="engineer-progress-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="Project completion percentage bar chart">${grid}${bars}</svg></div><p class="analytics-chart-note">Based on completed tasks. Projects without tasks show 100% only when their project status is Completed.</p>`;
+}
+
 async function loadEngineerWorkspaceData(sb,id){
  const [projects,tasks,payments]=await Promise.all([
   sb.from('engineer_projects').select('id,title,description,status,start_date,due_date').eq('assigned_engineer_id',id).order('created_at',{ascending:false}),
@@ -237,6 +258,7 @@ async function loadEngineerWorkspaceData(sb,id){
  const activeProjects=projectRows.filter(p=>['in_progress','active'].includes(p.status)).length;
  const completedTasks=taskRows.filter(t=>t.status==='completed').length;
  const taskRate=taskRows.length?Math.round(completedTasks/taskRows.length*100):0;
+ renderEngineerAnalyticsChart(projectRows,taskRows);
  const put=(elementId,value)=>{const node=document.getElementById(elementId);if(node)node.textContent=String(value);};
  put('engineerOverviewTotal',projectRows.length);
  put('engineerOverviewActive',activeProjects);

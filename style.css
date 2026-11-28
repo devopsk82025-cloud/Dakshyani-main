@@ -190,3 +190,20 @@ body.dark-ui #portalContent .rank-name{color:#fff}body.dark-ui .profile-strength
 #adminEngineerProjects,#adminEngineerTasks,#adminEngineerPayments,#engineerMyProjects,#engineerMyTasks,#engineerMyEarnings{margin:12px 0 26px}
 [data-engineer-task-status]{min-width:140px;padding:9px;border:1px solid var(--line,#ddd);border-radius:9px;background:var(--surface,#fff);color:inherit}
 @media(max-width:760px){.engineer-admin-grid{grid-template-columns:1fr}.engineer-admin-grid .project-form:last-child{grid-column:auto}}
+
+
+/* Engineer performance analytics graph */
+.engineer-analytics-graph-card{margin-bottom:18px}
+.engineer-analytics-chart{width:100%;min-height:130px}
+.engineer-chart-scroll{width:100%;overflow-x:auto;overscroll-behavior-x:contain}
+.engineer-progress-svg{display:block;width:100%;min-width:560px;height:auto;overflow:visible}
+.engineer-progress-svg .analytics-grid-line{stroke:rgba(148,163,184,.24);stroke-width:1;stroke-dasharray:4 5}
+.engineer-progress-svg .analytics-axis-label{fill:var(--muted,#94a3b8);font:11px Arial,sans-serif}
+.engineer-progress-svg .analytics-project-label{fill:var(--text,#e5e7eb);font:12px Arial,sans-serif}
+.engineer-progress-svg .analytics-bar-track{fill:rgba(148,163,184,.16)}
+.engineer-progress-svg .analytics-bar-fill{fill:#36b8aa}
+.engineer-progress-svg .analytics-value-label{fill:var(--text,#e5e7eb);font:700 12px Arial,sans-serif}
+.engineer-progress-svg .analytics-sub-label{fill:var(--muted,#94a3b8);font:10px Arial,sans-serif}
+.analytics-chart-note{margin:8px 0 0;color:var(--muted,#94a3b8);font-size:11px;line-height:1.5}
+body:not(.dark-ui) .engineer-progress-svg .analytics-project-label,body:not(.dark-ui) .engineer-progress-svg .analytics-value-label{fill:#25324a}
+@media(max-width:600px){.engineer-progress-svg{min-width:520px}}
