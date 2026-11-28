@@ -150,34 +150,6 @@ body.dark-ui #portalContent .form-note{color:#aaa8c2}
 body.dark-ui .admin-rank-control{color:#c8c5dc}
 
 
-/* Freelancer analytics dashboard refresh */
-.site-header.hidden{display:none!important}
-#portalContent .freelancer-welcome{display:flex;justify-content:space-between;align-items:center;gap:24px;min-height:190px;padding:28px 34px;border-radius:20px;background:linear-gradient(115deg,#182b53,#344b91 58%,#6552aa);color:#fff;overflow:hidden;position:relative;margin-bottom:18px}
-.freelancer-kicker{font-size:10px;font-weight:800;letter-spacing:.16em;color:#a9eff0}
-.freelancer-welcome h2{font:700 clamp(24px,3vw,34px)/1.12 'Space Grotesk',sans-serif;margin:12px 0 8px;color:#fff}
-.freelancer-welcome p{font-size:12px;color:#d5def7;margin:0 0 16px;max-width:520px}
-.freelancer-welcome .mini-btn{background:#fff;color:#35427e;border-color:#fff;padding:10px 14px}
-.freelancer-welcome-mark{font-size:100px;color:#ffffff70;padding:0 35px;text-shadow:0 0 45px #a4aaff80}
-.freelancer-metrics{grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin:0 0 18px}
-.freelancer-metrics .metric-card{min-height:118px;padding:18px}
-.freelancer-metrics .metric-card strong{font-size:27px}
-.freelancer-overview-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
-#portalContent .rank-summary,#portalContent .profile-strength,#portalContent .freelancer-chart-card{margin:0;padding:21px}
-.rank-medal{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;background:#e9e7ff;color:#6454ca;font-size:21px}
-.rank-name{font:700 30px 'Space Grotesk',sans-serif;margin:7px 0 15px;color:#fff}
-.rank-progress-track{height:9px;border-radius:20px;background:#27375c;overflow:hidden;margin:13px 0 7px}
-.rank-progress-track i{height:100%;display:block;border-radius:20px;background:linear-gradient(90deg,#55d9d5,#8d7aff);transition:width .5s}
-.rank-foot{display:flex;justify-content:space-between;align-items:center;color:#a8b1d0;font-size:10px}
-.rank-foot b{color:#fff}
-.rank-readonly-note{font-size:10px;line-height:1.6;color:#a8b1d0;margin:16px 0 0}
-.profile-strength .card-heading>strong{font:700 25px 'Space Grotesk';color:#71ded6}
-.profile-strength .rank-progress-track i{background:linear-gradient(90deg,#4acdbd,#6e9df8)}
-.profile-strength-meta{display:flex;justify-content:space-between;gap:10px;border-top:1px solid #29375f;padding-top:14px;margin-top:16px;font-size:11px;color:#a8b1d0}
-.profile-strength-meta b{color:#fff}
-.chart-legend{font-size:10px;color:#a8b1d0;display:flex;align-items:center;gap:7px}.chart-legend i{width:8px;height:8px;border-radius:50%;background:#69d9d2;display:inline-block}
-.chart-wrap{width:100%;overflow:hidden}.freelancer-chart{width:100%;height:auto;min-height:130px;overflow:visible}.freelancer-chart line{stroke:#34436a;stroke-width:1;stroke-dasharray:3 5}.freelancer-chart polyline{fill:none;stroke:#72ded7;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}.freelancer-chart circle{fill:#8d7aff;stroke:#fff;stroke-width:2}.freelancer-chart text{font:10px Arial,sans-serif;fill:#a8b1d0}
-.status-breakdown{display:grid;gap:12px}.status-breakdown-row{display:grid;grid-template-columns:105px 1fr 25px;gap:12px;align-items:center;font-size:10px;text-transform:capitalize;color:#d7def5}.status-breakdown-row b{text-align:right;color:#fff}.status-track{height:7px;border-radius:12px;background:#27375c;overflow:hidden}.status-track i{display:block;height:100%;background:linear-gradient(90deg,#57d8cf,#8877ff);border-radius:12px}
-.rank-admin-intro{margin-bottom:16px;line-height:1.6}.rank-admin-list{margin-top:16px}.rank-admin-row{align-items:center}.rank-admin-person{flex:1;min-width:0}.rank-admin-person p{margin:5px 0 8px}.rank-pill{display:inline-flex;border-radius:20px;padding:5px 9px;background:#252c55;color:#b8b4ff;font-size:9px;font-weight:800}.rank-admin-edit{display:flex;align-items:end;gap:9px}.rank-admin-edit label{display:grid;gap:5px;font-size:10px;color:#a8b1d0}.rank-admin-edit input{width:76px;border:1px solid #34436f;border-radius:8px;background:#0e1835;color:#fff;padding:9px}
-body.dark-ui #portalContent .rank-name{color:#fff}body.dark-ui .profile-strength-meta b{color:#fff}
-@media(max-width:850px){.freelancer-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.freelancer-overview-grid{grid-template-columns:1fr}}
-@media(max-width:600px){#portalContent .freelancer-welcome{padding:22px;min-height:165px}.freelancer-welcome-mark{font-size:58px;padding:0;opacity:.7}.freelancer-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.freelancer-metrics .metric-card{padding:13px}.freelancer-metrics .metric-card strong{font-size:22px}.rank-admin-row{align-items:flex-start}.rank-admin-edit{width:100%;justify-content:flex-end}.status-breakdown-row{grid-template-columns:82px 1fr 20px;gap:8px}}
+/* Engineer workspace: Skerry-inspired responsive project dashboard */
+.engineer-columns{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}.engineer-toolbar{display:flex;justify-content:flex-end;margin-bottom:14px}.engineer-toolbar label,.engineer-timer-form label{display:grid;gap:7px;font-size:12px;color:var(--muted)}.engineer-toolbar select,.engineer-timer-form select,.engineer-timer-form input,.engineer-task select{padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink)}.engineer-timer-form{display:grid;grid-template-columns:1fr 1.4fr auto;align-items:end;gap:12px}.running-timer{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}.running-timer p{font-size:13px;color:var(--muted)}.engineer-task .project-actions{align-items:center;flex-wrap:wrap}.engineer-task select{max-width:150px}.engineer-task{align-items:center}.engineer-toolbar select{min-width:170px}body.dark-ui .engineer-toolbar select,body.dark-ui .engineer-timer-form select,body.dark-ui .engineer-timer-form input,body.dark-ui .engineer-task select{background:#19192e;color:#f4f2ff;border-color:#494765}
+@media(max-width:760px){.engineer-columns{grid-template-columns:1fr}.engineer-timer-form{grid-template-columns:1fr}.engineer-task{align-items:flex-start;flex-direction:column}.engineer-task .project-actions{width:100%}.engineer-task select{flex:1;min-width:120px}}
