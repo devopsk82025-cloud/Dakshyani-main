@@ -1,0 +1,126 @@
+/* Milestone-inspired visual integration for the existing Supabase Engineer workspace.
+   The source templates are retained in /template-assets; this stylesheet scopes
+   the visual layer to Engineer accounts so Admin/Company/Partner dashboards are unchanged. */
+body.engineer-template-mode {
+  --eng-bg:#f6f7f9; --eng-surface:#ffffff; --eng-surface-2:#f3f4f6;
+  --eng-ink:#111827; --eng-text:#374151; --eng-muted:#6b7280;
+  --eng-line:#e5e7eb; --eng-accent:#0e7490; --eng-accent-soft:#e0f2f5;
+  background:var(--eng-bg); color:var(--eng-text);
+  font-family:Inter,system-ui,sans-serif;
+}
+body.engineer-template-mode.dark-ui {
+  --eng-bg:#0f1115; --eng-surface:#171a21; --eng-surface-2:#1e222b;
+  --eng-ink:#f3f4f6; --eng-text:#d1d5db; --eng-muted:#9ca3af;
+  --eng-line:#2a2f3a; --eng-accent:#22a6bd; --eng-accent-soft:#12343b;
+}
+body.engineer-template-mode #portalDashboard {background:var(--eng-bg);color:var(--eng-text)}
+body.engineer-template-mode #portalDashboard .sidebar {background:#0f172a;border-right:1px solid #202b3c}
+body.engineer-template-mode #portalDashboard .side-brand {font-family:"Inter Tight",Inter,sans-serif;font-size:19px;letter-spacing:-.4px}
+body.engineer-template-mode #portalDashboard .side-label {color:#91a0b4;font-size:10px;letter-spacing:.12em}
+body.engineer-template-mode #portalDashboard .side-link {border-radius:8px;color:#cbd5e1;font-family:Inter,sans-serif;font-size:13px;padding:10px 12px}
+body.engineer-template-mode #portalDashboard .side-link:hover,
+body.engineer-template-mode #portalDashboard .side-link.active {background:#0e7490;color:#fff;box-shadow:none}
+body.engineer-template-mode #portalDashboard .dash-main {max-width:none;padding:32px clamp(18px,3.2vw,48px) 56px}
+body.engineer-template-mode #portalDashboard .dash-top {padding-bottom:20px;border-bottom:1px solid var(--eng-line);margin-bottom:24px}
+body.engineer-template-mode #portalDashboard .dash-top h1 {font:700 28px "Inter Tight",Inter,sans-serif;letter-spacing:-.7px;color:var(--eng-ink)}
+body.engineer-template-mode #portalDashboard .dash-top p,
+body.engineer-template-mode #portalDashboard .dash-top .eyebrow {color:var(--eng-muted)}
+body.engineer-template-mode #portalDashboard .user-pill {background:var(--eng-surface);border-color:var(--eng-line);color:var(--eng-ink)}
+body.engineer-template-mode #portalDashboard .user-pill small {color:var(--eng-muted)}
+body.engineer-template-mode #portalDashboard .content-card,
+body.engineer-template-mode #portalDashboard .metric-card,
+body.engineer-template-mode #portalDashboard .engineer-project-card {
+  background:var(--eng-surface);border:1px solid var(--eng-line);border-radius:10px;
+  box-shadow:none;color:var(--eng-text);
+}
+body.engineer-template-mode #portalDashboard .content-card {padding:20px;margin-top:16px}
+body.engineer-template-mode #portalDashboard .card-heading h3,
+body.engineer-template-mode #portalDashboard .content-card h3,
+body.engineer-template-mode #portalDashboard .engineer-project-card h3 {font-family:"Inter Tight",Inter,sans-serif;color:var(--eng-ink)}
+body.engineer-template-mode #portalDashboard .card-heading p,
+body.engineer-template-mode #portalDashboard .form-note {color:var(--eng-muted)}
+body.engineer-template-mode #portalDashboard .metric-card {padding:18px;min-height:112px}
+body.engineer-template-mode #portalDashboard .metric-card>span,
+body.engineer-template-mode #portalDashboard .metric-card small {color:var(--eng-muted)}
+body.engineer-template-mode #portalDashboard .metric-card strong {font-family:"Inter Tight",Inter,sans-serif;color:var(--eng-ink);font-size:28px}
+body.engineer-template-mode #portalDashboard .freelancer-welcome {
+  border-radius:10px;background:linear-gradient(110deg,#102b3a,#164e63 58%,#0e7490);
+  min-height:168px;padding:26px 30px;margin-bottom:16px;
+}
+body.engineer-template-mode #portalDashboard .freelancer-welcome h2 {font-family:"Inter Tight",Inter,sans-serif}
+body.engineer-template-mode #portalDashboard .freelancer-welcome .mini-btn {border-radius:7px}
+body.engineer-template-mode #portalDashboard .engineer-project-grid {grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+body.engineer-template-mode #portalDashboard .engineer-project-card {
+  border-radius:10px;padding:18px;transition:border-color .18s,transform .18s;
+}
+body.engineer-template-mode #portalDashboard .engineer-project-card:hover {border-color:var(--eng-accent);transform:translateY(-2px)}
+body.engineer-template-mode #portalDashboard .engineer-project-card h3 {font-size:17px;line-height:1.3}
+body.engineer-template-mode #portalDashboard .engineer-project-description {color:var(--eng-muted);font-size:12px;min-height:34px}
+body.engineer-template-mode #portalDashboard .engineer-project-card-foot {color:var(--eng-muted);font-size:11px}
+body.engineer-template-mode #portalDashboard .engineer-project-icon {background:var(--eng-accent-soft);color:var(--eng-accent);border-radius:8px}
+body.engineer-template-mode #portalDashboard .engineer-project-progress-head {color:var(--eng-muted);font-size:12px}
+body.engineer-template-mode #portalDashboard .engineer-project-progress-head b {color:var(--eng-ink)}
+body.engineer-template-mode #portalDashboard .rank-progress-track {background:var(--eng-surface-2);height:7px;border-radius:99px}
+body.engineer-template-mode #portalDashboard .rank-progress-track i {background:var(--eng-accent);border-radius:99px}
+body.engineer-template-mode #portalDashboard .engineer-task-toolbar {display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:16px}
+body.engineer-template-mode #portalDashboard .engineer-task-board {gap:14px;align-items:stretch}
+body.engineer-template-mode #portalDashboard .engineer-task-column {
+  background:var(--eng-surface-2);border:1px solid var(--eng-line);border-radius:10px;padding:12px;min-width:235px;
+}
+body.engineer-template-mode #portalDashboard .engineer-task-column>header {color:var(--eng-ink);padding:4px 3px 13px}
+body.engineer-template-mode #portalDashboard .engineer-task-column>header h3 {font:700 13px "Inter Tight",Inter,sans-serif;color:var(--eng-ink)}
+body.engineer-template-mode #portalDashboard .engineer-task-column>header span {background:var(--eng-surface);border:1px solid var(--eng-line);color:var(--eng-muted)}
+body.engineer-template-mode #portalDashboard .engineer-task-card {
+  background:var(--eng-surface);border:1px solid var(--eng-line);border-radius:8px;padding:13px;color:var(--eng-text);
+  box-shadow:0 2px 5px #00000008;
+}
+body.engineer-template-mode #portalDashboard .engineer-task-card h4 {font:600 13px/1.4 "Inter Tight",Inter,sans-serif;color:var(--eng-ink)}
+body.engineer-template-mode #portalDashboard .engineer-task-card>p,
+body.engineer-template-mode #portalDashboard .engineer-task-card-meta small,
+body.engineer-template-mode #portalDashboard .engineer-task-description {color:var(--eng-muted);font-size:10px}
+body.engineer-template-mode #portalDashboard .engineer-task-update {color:var(--eng-muted);font-size:11px}
+body.engineer-template-mode #portalDashboard .engineer-task-update select,
+body.engineer-template-mode #portalDashboard .engineer-task-toolbar input,
+body.engineer-template-mode #portalDashboard .project-form input,
+body.engineer-template-mode #portalDashboard .project-form select,
+body.engineer-template-mode #portalDashboard .project-form textarea {
+  background:var(--eng-surface);border:1px solid var(--eng-line);color:var(--eng-ink);border-radius:7px;
+}
+body.engineer-template-mode #portalDashboard .engineer-task-update select {padding:8px 9px;font-size:11px}
+body.engineer-template-mode #portalDashboard .engineer-task-empty {color:var(--eng-muted);border:1px dashed var(--eng-line);border-radius:8px}
+body.engineer-template-mode #portalDashboard .engineer-analytics-chart,
+body.engineer-template-mode #portalDashboard .status-breakdown {color:var(--eng-text)}
+body.engineer-template-mode #portalDashboard .analytics-grid-line {stroke:var(--eng-line)}
+body.engineer-template-mode #portalDashboard .analytics-axis-label,
+body.engineer-template-mode #portalDashboard .analytics-project-label,
+body.engineer-template-mode #portalDashboard .analytics-sub-label {fill:var(--eng-muted)}
+body.engineer-template-mode #portalDashboard .analytics-value-label {fill:var(--eng-ink)}
+body.engineer-template-mode #portalDashboard .analytics-bar-track {fill:var(--eng-surface-2)}
+body.engineer-template-mode #portalDashboard .analytics-bar-fill {fill:var(--eng-accent)}
+body.engineer-template-mode #portalDashboard .status-breakdown-row {color:var(--eng-text)}
+body.engineer-template-mode #portalDashboard .status-track {background:var(--eng-surface-2)}
+body.engineer-template-mode #portalDashboard .status-track i {background:var(--eng-accent)}
+body.engineer-template-mode #portalDashboard .github-project-item,
+body.engineer-template-mode #portalDashboard .github-profile-link {background:var(--eng-surface-2);border:1px solid var(--eng-line);color:var(--eng-ink);border-radius:8px}
+body.engineer-template-mode #portalDashboard .mini-btn,
+body.engineer-template-mode #portalDashboard .btn {border-radius:7px}
+@media(max-width:1050px){
+ body.engineer-template-mode #portalDashboard .engineer-task-board {grid-template-columns:repeat(4,minmax(235px,1fr))}
+}
+@media(max-width:760px){
+ body.engineer-template-mode #portalDashboard .sidebar {width:70px;padding:18px 8px}
+ body.engineer-template-mode #portalDashboard .side-brand>span:not(.brand-mark),
+ body.engineer-template-mode #portalDashboard .side-label,
+ body.engineer-template-mode #portalDashboard .side-link span,
+ body.engineer-template-mode #portalDashboard .sidebar-bottom .side-link span {display:none}
+ body.engineer-template-mode #portalDashboard .side-brand {padding:0 9px 28px}
+ body.engineer-template-mode #portalDashboard .side-link {justify-content:center;padding:11px 5px}
+ body.engineer-template-mode #portalDashboard .dash-main {margin-left:70px;width:calc(100% - 70px);padding:22px 13px 40px}
+ body.engineer-template-mode #portalDashboard .dash-top {align-items:flex-start;gap:10px}
+ body.engineer-template-mode #portalDashboard .dash-top h1 {font-size:22px}
+ body.engineer-template-mode #portalDashboard .freelancer-metrics {grid-template-columns:repeat(2,minmax(0,1fr))}
+ body.engineer-template-mode #portalDashboard .engineer-project-grid {grid-template-columns:1fr}
+ body.engineer-template-mode #portalDashboard .engineer-task-board {grid-template-columns:repeat(4,minmax(230px,1fr));overflow-x:auto}
+ body.engineer-template-mode #portalDashboard .freelancer-welcome {padding:22px 18px;min-height:150px}
+ body.engineer-template-mode #portalDashboard .freelancer-welcome-mark {display:none}
+}
